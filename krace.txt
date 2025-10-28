@@ -1,0 +1,2 @@
+C:\Users\Mihovil\Desktop\faks\cetvrta godina\rasp\1lab\1dz-client\1dz-client\build\libs>java -jar 1dz-server-template-0.0.1-SNAPSHOT.jar
+./gradlew clean build -x test
