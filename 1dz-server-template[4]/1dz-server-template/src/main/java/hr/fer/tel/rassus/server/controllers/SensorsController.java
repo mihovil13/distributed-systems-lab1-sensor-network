@@ -41,7 +41,7 @@ public class SensorsController {
         }
         Sensor nearest = sensorService.findNearestNeighbour(sensor);
         if (nearest == null) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }
         Map<String, Object> response = Map.of(
                 "latitude", nearest.getLatitude(),

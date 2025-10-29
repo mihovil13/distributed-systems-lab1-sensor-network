@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "hr.fer.tel.rassus.sensor.grpc";
+
+package hr.fer.tel.rassus;
+
+service SensorService {
+  rpc FetchLatestReading (SensorRequest) returns (SensorReadingMessage) {}
+}
+
+message SensorRequest {
+  string requester = 1;
+}
+
+message SensorReadingMessage {
+  double temperature = 1;
+  double pressure = 2;
+  double humidity = 3;
+  double co = 4;
+  double no2 = 5;
+  double so2 = 6;
+}

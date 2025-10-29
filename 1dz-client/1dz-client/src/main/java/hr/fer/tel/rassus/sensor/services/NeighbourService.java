@@ -1,7 +1,6 @@
 package hr.fer.tel.rassus.sensor.services;
 
-import hr.fer.tel.rassus.sensor.beans.SensorReading;
-import hr.fer.tel.rassus.sensor.beans.Senzor;
+import hr.fer.tel.rassus.sensor.beans.Sensor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,7 @@ import java.util.Optional;
 public class NeighbourService {
     private final RestTemplate restTemplate = new RestTemplate();
 
-    public Optional<Senzor> getNearestNeighbour(String serverUrl, Long id) {
+    public Optional<Sensor> getNearestNeighbour(String serverUrl, Long id) {
         try {
             ResponseEntity<Map> response = restTemplate.getForEntity(
                     serverUrl + "/sensors/nearest?sensorId=" + id, Map.class);
@@ -28,7 +27,7 @@ public class NeighbourService {
                 String ip = (String) body.get("ip");
                 int port = ((Number) body.get("port")).intValue();
 
-                Senzor nearest = new Senzor(latitude, longitude, ip, port);
+                Sensor nearest = new Sensor(latitude, longitude, ip, port);
                 System.out.println("Najbliži susjed: " + nearest.toString());
                 return Optional.of(nearest);
             } else if (response.getStatusCode() == HttpStatus.NOT_FOUND) {

@@ -1,2 +1,15 @@
 C:\Users\Mihovil\Desktop\faks\cetvrta godina\rasp\1lab\1dz-client\1dz-client\build\libs>java -jar 1dz-server-template-0.0.1-SNAPSHOT.jar
 ./gradlew clean build -x test
+
+1. SensorReading (Java) ≠ Reading (proto)
+
+Tvoj SensorReading je lokalna klasa u Javi — koristi se unutar senzora i u REST komunikaciji.
+
+Reading iz .proto fajla je gRPC message — koristi se samo kod slanja podataka preko gRPC-a.
+
+To su dva odvojena modela, ali s istim poljima (temperature, pressure, humidity, ...).
+Najbolje ih zadrži odvojeno, jer:
+
+SensorReading je tvoj domeni objekt koji možeš slobodno mijenjati, testirati, serializirati u JSON itd.
+
+Reading (proto) je automatski generiran kod — gRPC koristi njega za binarni prijenos, i ne smiješ ga uređivati ručno.

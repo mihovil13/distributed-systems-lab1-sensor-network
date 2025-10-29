@@ -1,6 +1,6 @@
 package hr.fer.tel.rassus.sensor.services;
 
-import hr.fer.tel.rassus.sensor.beans.Senzor;
+import hr.fer.tel.rassus.sensor.beans.Sensor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -30,18 +30,18 @@ public class RegistrationService {
         Random random2 = new Random();
         double longitude = LON_MIN + random2.nextDouble(LON_MAX - LON_MIN);
 
-        Senzor request = new Senzor(latitude, longitude, ip, port);
+        Sensor request = new Sensor(latitude, longitude, ip, port);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<Senzor> entity = new HttpEntity<>(request, headers);
+        HttpEntity<Sensor> entity = new HttpEntity<>(request, headers);
 
         try {
             ResponseEntity<String> response = restTemplate.postForEntity(serverUrl + "/sensors/register", entity, String.class);
 
             if (response.getStatusCode() == HttpStatus.CREATED) {
                 String location = response.getHeaders().getLocation().toString();
-                System.out.println("Senzor uspješno registriran! Resource: " + location);
+                System.out.println("Senzor uspješno registriran! Odgovor: " + response.getStatusCode() + " resurs " + location);
                 String[] parts = location.split("/");
                 setMySensorId(Long.parseLong(parts[parts.length - 1]));
                 return location;

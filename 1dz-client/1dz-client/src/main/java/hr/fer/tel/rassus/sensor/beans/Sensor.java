@@ -1,12 +1,12 @@
 package hr.fer.tel.rassus.sensor.beans;
 
-public class Senzor {
+public class Sensor {
     private double latitude;
     private double longitude;
     private String ip;
     private int port;
 
-    public Senzor(double latitude, double longitude, String ip, int port) {
+    public Sensor(double latitude, double longitude, String ip, int port) {
         this.latitude = latitude;
         this.longitude = longitude;
         this.ip = ip;

@@ -1,7 +1,5 @@
 package hr.fer.tel.rassus.sensor.beans;
 
-import org.springframework.context.annotation.Bean;
-
 public class SensorReading {
     private double temperature;
     private double pressure;
@@ -9,6 +7,15 @@ public class SensorReading {
     private double co;
     private double no2;
     private double so2;
+
+    public SensorReading() {
+        this.temperature = 0;
+        this.pressure = 0;
+        this.humidity = 0;
+        this.co = 0;
+        this.no2 = 0;
+        this.so2 = 0;
+    }
 
     public SensorReading(double temperature, double pressure, double humidity, double co, double no2, double so2) {
         this.temperature = temperature;
@@ -45,7 +52,9 @@ public class SensorReading {
 
     @Override
     public String toString() {
-        return String.format("Temp: %.2f, Pressure: %.2f, Humidity: %.2f, CO: %.2f, NO2: %.2f, SO2: %.2f",
-                temperature, pressure, humidity, co, no2, so2);
+        return String.format(
+                "Temp: %.2f, Pressure: %.2f, Humidity: %.2f, CO: %.2f, NO2: %.2f, SO2: %.2f",
+                temperature, pressure, humidity, co, no2, so2
+        );
     }
 }

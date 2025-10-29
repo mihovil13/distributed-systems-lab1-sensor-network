@@ -1,1 +1,4 @@
 rootProject.name = '1dz-server-template'
+include 'src:main:proto'
+findProject(':src:main:proto')?.name = 'proto'
+
