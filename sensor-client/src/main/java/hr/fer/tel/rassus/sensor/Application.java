@@ -49,33 +49,40 @@ public class Application {
             registrationService.registerSensor(serverUrl, ip, port);
             System.out.println("Senzor registriran s portom: " + port);
 
-            // --- Pokretanje gRPC servera ---
             SensorGrpcServer grpcServer = new SensorGrpcServer(new SensorGrpcService(readingService), port);
             grpcServer.start();
             System.out.println("gRPC server pokrenut na portu: " + port);
 
-            // --- Poziv susjedovih očitanja i izračun prosjeka u background threadu ---
             new Thread(() -> {
+                Sensor nearest = null;
+
                 while (true) {
                     try {
-                        // Generiranje vlastitog očitanja
                         readingService.makeReading();
                         SensorReading myReading = readingService.getSensorReading();
+                        if (nearest == null) {
+                            Optional<Sensor> nearestOpt = neighbourService.getNearestNeighbour(serverUrl, registrationService.getMySensorId());
+                            nearest = nearestOpt.orElse(null);
+                            if (nearest != null) {
+                                System.out.println("Pronađen početni susjed: " + nearest);
+                            } else {
+                                System.out.println("Još nemam susjeda.");
+                            }
+                        }
+                        if (nearest != null) {
+                            try {
+                                SensorGrpcClient grpcClient = new SensorGrpcClient(nearest.getIp(), nearest.getPort(), port);
+                                SensorReading neighbourReading = grpcClient.requestSensorRequest();
+                                grpcClient.stop();
+                                SensorReading avgReading = readingService.averageWithNeighbour(neighbourReading);
+                                System.out.println("Prosjek sa susjedom: " + avgReading);
+                                readingService.sendReadingToRestServer("http://localhost:8090/readings", avgReading, port);
+                            } catch (Exception e) {
+                                System.err.println("Ne mogu doći do susjeda, koristim svoja očitanja.");
+                                readingService.sendReadingToRestServer("http://localhost:8090/readings", myReading, port);
 
-                        Optional<Sensor> nearestOpt = neighbourService.getNearestNeighbour(serverUrl, registrationService.getMySensorId());
-
-                        if (nearestOpt.isPresent()) {
-                            Sensor nearest = nearestOpt.get();
-                            SensorGrpcClient grpcClient = new SensorGrpcClient(nearest.getIp(), nearest.getPort(), port);
-                            SensorReading neighbourReading = grpcClient.requestSensorRequest();
-                            grpcClient.stop();
-
-                            // Računanje prosjeka
-                            SensorReading avgReading = readingService.averageWithNeighbour(neighbourReading);
-                            System.out.println("Prosjek sa susjedom: " + avgReading);
-                            readingService.sendReadingToRestServer("http://localhost:8090/readings", avgReading, port);
+                            }
                         } else {
-                            System.out.println("Nemam susjeda, koristim vlastita očitanja: " + myReading);
                             readingService.sendReadingToRestServer("http://localhost:8090/readings", myReading, port);
                         }
 
@@ -91,7 +98,7 @@ public class Application {
                 }
             }).start();
 
-            // --- Blokiraj main thread da gRPC server radi ---
+
             grpcServer.blockUntilShutdown();
         };
 

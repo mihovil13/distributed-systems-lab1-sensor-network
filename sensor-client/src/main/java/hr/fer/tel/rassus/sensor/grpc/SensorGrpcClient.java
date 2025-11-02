@@ -14,7 +14,7 @@ public class SensorGrpcClient {
     private static final Logger logger = Logger.getLogger(SensorGrpcClient.class.getName());
     private final ManagedChannel channel;
     private final SensorServiceGrpc.SensorServiceBlockingStub sensorServiceBlockingStub;
-    private final int requesterPort; // port klijenta
+    private final int requesterPort;
 
     public SensorGrpcClient(String host, int port, int requesterPort) {
         this.channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext().build();
